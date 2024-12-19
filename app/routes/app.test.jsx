@@ -1,6 +1,7 @@
 import { useLoaderData, Form } from '@remix-run/react';
 import { json } from '@remix-run/node';
 import React from 'react'
+import { Layout } from '@shopify/polaris';
 
 export async function loader() {
     const test = {
@@ -24,7 +25,13 @@ const Test = () => {
     const user = useLoaderData();
     console.log("get test data: ", user)
     return (
-        <div>
+        <Layout>
+            <ui-title-bar title="Products">
+                <button onclick="console.log('Secondary action')">Secondary action</button>
+                <button variant="primary" onclick="console.log('Primary action')">
+                    Primary action
+                </button>
+            </ui-title-bar>
             <Form method="post">
                 <h1>Settings for {user.name}</h1>
 
@@ -36,7 +43,9 @@ const Test = () => {
 
                 <button type="submit">Save</button>
             </Form>
-        </div>
+
+        </Layout>
+
     )
 }
 
