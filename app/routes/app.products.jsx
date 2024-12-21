@@ -8,7 +8,7 @@ export async function loader({ request }) {
   const response = await admin.graphql(
     `#graphql
     query {
-      products(first: 3, reverse: false) {
+      products(first: 5, reverse: true) {
         edges {
           node {
             id

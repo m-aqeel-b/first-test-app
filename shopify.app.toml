@@ -1,7 +1,7 @@
 # Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
 
 client_id = "4deb5609128ec7dc072c08245a5ca7c0"
-application_url = "https://disk-mozilla-alternative-episode.trycloudflare.com"
+application_url = "https://upgrade-pensions-converter-suggested.trycloudflare.com"
 embedded = true
 name = "first-test-app"
 handle = "first-test-app-143"
@@ -19,9 +19,9 @@ scopes = "read_products,write_products,read_product_listings,read_orders,write_d
 
 [auth]
 redirect_urls = [
-  "https://disk-mozilla-alternative-episode.trycloudflare.com/auth/callback",
-  "https://disk-mozilla-alternative-episode.trycloudflare.com/auth/shopify/callback",
-  "https://disk-mozilla-alternative-episode.trycloudflare.com/api/auth/callback"
+  "https://upgrade-pensions-converter-suggested.trycloudflare.com/auth/callback",
+  "https://upgrade-pensions-converter-suggested.trycloudflare.com/auth/shopify/callback",
+  "https://upgrade-pensions-converter-suggested.trycloudflare.com/api/auth/callback"
 ]
 
 [pos]
