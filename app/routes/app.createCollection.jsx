@@ -15,40 +15,41 @@ import { authenticate } from "../shopify.server";
 export async function action({ request }) {
   const { admin } = await authenticate.admin(request);
   const formData = await request.formData();
-  const title = formData.get("title");
+  const title = formData.get("collectionTitle");
+  console.log("test7", title);
 
   const response = await admin.graphql(
     `#graphql
-        mutation createProductMetafields($input: ProductInput!) {
-          productCreate(input: $input) {
-            product {
+  mutation createCollectionMetafields($input: CollectionInput!) {
+    collectionCreate(input: $input) {
+      collection {
+        id
+        metafields(first: 3) {
+          edges {
+            node {
               id
-              metafields(first: 3) {
-                edges {
-                  node {
-                    id
-                    namespace
-                    key
-                    value
-                  }
-                }
-              }
-            }
-            userErrors {
-              message
-              field
+              namespace
+              key
+              value
             }
           }
-        }`,
+        }
+      }
+      userErrors {
+        message
+        field
+      }
+    }
+  }`,
     {
       variables: {
         input: {
           metafields: [
             {
               namespace: "my_field",
-              key: "liner_material",
+              key: "subtitle",
               type: "single_line_text_field",
-              value: "Synthetic Leather",
+              value: "Bold Colors",
             },
           ],
           title: title,
@@ -56,21 +57,24 @@ export async function action({ request }) {
       },
     },
   );
+
   const data = await response.json();
-  return json({ product: data });
+
+  return json({ collection: data });
 }
 
-const createProduct = () => {
-  const [title, setTitle] = useState("");
+const createCollection = () => {
+  const [collectionTitle, setcollectionTitle] = useState("");
   const submit = useSubmit();
   const handleSubmit = () => submit({}, { replace: true, method: "POST" });
+
   return (
     <Page fullWidth>
       <Layout>
         <Layout.Section>
           <Card>
             <Text as="h2" variant="bodyMd">
-              Add Product From Here:
+              Add Collections:
             </Text>
           </Card>
         </Layout.Section>
@@ -78,15 +82,14 @@ const createProduct = () => {
           <Form onSubmit={handleSubmit} method="POST">
             <FormLayout>
               <TextField
-                value={title}
-                onChange={(value) => setTitle(value)}
+                value={collectionTitle}
+                onChange={(value) => setcollectionTitle(value)}
                 label="Product Title"
                 type="text"
-                name="title"
+                name="collectionTitle"
                 autoComplete="false"
               />
-
-              <Button submit>Submit</Button>
+              <Button submit>Add</Button>
             </FormLayout>
           </Form>
         </Layout.Section>
@@ -95,4 +98,4 @@ const createProduct = () => {
   );
 };
 
-export default createProduct;
+export default createCollection;
