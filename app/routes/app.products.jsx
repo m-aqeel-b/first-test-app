@@ -22,6 +22,13 @@ export async function loader({ request }) {
               publishDate
               isPublished
             }
+            variants(first:1){
+              edges{
+                node{
+                  price
+                }
+              }
+            }
           }
         }
       }
@@ -33,14 +40,13 @@ export async function loader({ request }) {
       products: { edges },
     },
   } = data;
+  console.log("edges1:", edges);
   return edges;
 }
 
-
-
 const Products = () => {
-  const getProducts = useLoaderData();  
-  console.log("get product",getProducts);
+  const getProducts = useLoaderData();
+  console.log("get product", getProducts);
   return (
     <Page fullWidth>
       <Layout>
@@ -52,7 +58,9 @@ const Products = () => {
                 sectioned
                 key={product.node.id}
               >
-                <p>{product.node.title}</p>
+                <p>
+                  {product.node.title}, {product.node.id}
+                </p>
               </Card>
             );
           })}

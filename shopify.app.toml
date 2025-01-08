@@ -1,7 +1,7 @@
 # Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
 
 client_id = "4deb5609128ec7dc072c08245a5ca7c0"
-application_url = "https://officials-andy-alot-stephen.trycloudflare.com"
+application_url = "https://affiliate-recognition-golf-myspace.trycloudflare.com"
 embedded = true
 name = "first-test-app"
 handle = "first-test-app-143"
@@ -19,9 +19,9 @@ scopes = "read_products,write_products,write_product_listings,read_product_listi
 
 [auth]
 redirect_urls = [
-  "https://officials-andy-alot-stephen.trycloudflare.com/auth/callback",
-  "https://officials-andy-alot-stephen.trycloudflare.com/auth/shopify/callback",
-  "https://officials-andy-alot-stephen.trycloudflare.com/api/auth/callback"
+  "https://affiliate-recognition-golf-myspace.trycloudflare.com/auth/callback",
+  "https://affiliate-recognition-golf-myspace.trycloudflare.com/auth/shopify/callback",
+  "https://affiliate-recognition-golf-myspace.trycloudflare.com/api/auth/callback"
 ]
 
 [pos]

@@ -37,3 +37,19 @@ model Customer {
   email String                     // Email, must be unique
   age   Int?                               // Age, optional field
 }
+
+model Bundles{
+  id Int @id @default(autoincrement())
+  name String
+  discountType String
+  discountValue Decimal
+  bundleProducts  BundleProducts[]
+}
+
+model BundleProducts{
+  id Int @id @default(autoincrement())
+  productId String
+  bundleId Int     // Foreign key to Bundles
+  bundle   Bundles @relation(fields: [bundleId], references: [id])
+}
+
