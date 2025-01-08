@@ -1,7 +1,8 @@
 import React from "react";
-import { Page, Layout, Card } from "@shopify/polaris";
+import { Page, Layout, Card, DataTable, Checkbox } from "@shopify/polaris";
 import { useLoaderData, useActionData } from "@remix-run/react";
 import { authenticate } from "../shopify.server";
+import { useState, useCallback } from "react";
 export async function loader({ request }) {
   const { admin } = await authenticate.admin(request);
 
@@ -47,6 +48,20 @@ export async function loader({ request }) {
 const Products = () => {
   const getProducts = useLoaderData();
   console.log("get product", getProducts);
+  // const rows = [
+  //   ["Emerald Silk Gown", "$875.00", 124689, 140, "$122,500.00"],
+  //   ["Mauve Cashmere Scarf", "$230.00", 124533, 83, "$19,090.00"],
+  //   [
+  //     "Navy Merino Wool Blazer with khaki chinos and yellow belt",
+  //     "$445.00",
+  //     124518,
+  //     32,
+  //     "$14,240.00",
+  //   ],
+  // ];
+  const [checked, setChecked] = useState(false);
+  const handleChange = useCallback((newChecked) => setChecked(newChecked), []);
+
   return (
     <Page fullWidth>
       <Layout>
@@ -59,7 +74,11 @@ const Products = () => {
                 key={product.node.id}
               >
                 <p>
-                  {product.node.title}, {product.node.id}
+                  <Checkbox
+                    label={product.node.title}
+                    checked={checked}
+                    onChange={(e) => handleChange(e.target.checked)}
+                  />
                 </p>
               </Card>
             );
