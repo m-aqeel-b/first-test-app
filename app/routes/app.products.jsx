@@ -6,6 +6,13 @@ import {
   DataTable,
   Checkbox,
   Button,
+  Frame,
+  Modal,
+  TextContainer,
+  Form,
+  TextField,
+  FormLayout,
+  Select,
 } from "@shopify/polaris";
 import { useLoaderData, useActionData } from "@remix-run/react";
 import { authenticate } from "../shopify.server";
@@ -54,6 +61,19 @@ export async function loader({ request }) {
 
 const Products = () => {
   const getProducts = useLoaderData();
+  const [active, setActive] = useState(false);
+  const handleChange1 = useCallback(() => setActive(!active), [active]);
+  const activator = <Button onClick={handleChange1}>Open</Button>;
+  const [bundleName, setBundleName] = useState("");
+  const [discountType, setDiscountType] = useState("");
+  const [discountValue, setDiscountValue] = useState("");
+  const options = [
+    { label: "Percentage", value: "percentage" },
+    { label: "Fixed", value: "fixed" },
+  ];
+  const handleSubmit = useCallback(() => {
+    console.log("form submited");
+  }, []);
   // console.log("get product", getProducts);
   // const rows = [
   //   ["Emerald Silk Gown", "$875.00", 124689, 140, "$122,500.00"],
@@ -102,6 +122,57 @@ const Products = () => {
             );
           })}
         </Layout.Section>
+        <div style={{ height: "500px" }}>
+          <Frame>
+            <Modal
+              activator={activator}
+              open={active}
+              onClose={handleChange1}
+              title="Add Bundles For Products"
+              primaryAction={{
+                content: "Add Bundle",
+                onAction: handleChange1,
+              }}
+              secondaryActions={[
+                {
+                  content: "Cancel",
+                  onAction: handleChange1,
+                },
+              ]}
+            >
+              <Modal.Section>
+                <TextContainer>
+                  <Form onSubmit={handleSubmit}>
+                    <FormLayout>
+                      <TextField
+                        value={bundleName}
+                        //onChange={handleBundleNameChange}
+                        label="Bundle Name"
+                        type="bundleName"
+                      />
+
+                      <Select
+                        label="Discount Type"
+                        options={options}
+                        // onChange={handleSelectChange}
+                        value={discountType}
+                      />
+
+                      <TextField
+                        value={discountValue}
+                        //onChange={handleBundleNameChange}
+                        label="Discount Value"
+                        type="discountValue"
+                      />
+
+                      {/* <Button submit>Submit</Button> */}
+                    </FormLayout>
+                  </Form>
+                </TextContainer>
+              </Modal.Section>
+            </Modal>
+          </Frame>
+        </div>
       </Layout>
     </Page>
   );
