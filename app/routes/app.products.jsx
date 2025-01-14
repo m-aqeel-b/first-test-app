@@ -64,7 +64,7 @@ export async function loader({ request }) {
 
 export async function action({ request }) {
   const formData = await request.formData();
-  console.log("hit2", formData.get("bundleName"));
+  console.log("hit2", formData);
   //console.log("checkdb", db);
   const savedData = await db.bundles.create({
     data: {
@@ -73,6 +73,20 @@ export async function action({ request }) {
       discountValue: formData.get("discountValue"),
     },
   });
+  console.log("saved", savedData);
+  const productIds = formData.get("selectedProductIds").split(",");
+  const savedEntries = await Promise.all(
+    productIds.map(async (productId) => {
+      // Save each product ID separately to the database
+      return await db.BundleProducts.create({
+        data: {
+          productId: productId.trim(), // Remove any extra spaces
+          bundleId: savedData.id,
+        },
+      });
+    }),
+  );
+
   return savedData;
 }
 
@@ -184,6 +198,10 @@ const Products = () => {
                 <TextContainer>
                   <Form method="POST">
                     <FormLayout>
+                      <TextField
+                        value={selectedProductIds}
+                        name="selectedProductIds"
+                      />
                       <TextField
                         value={bundleName}
                         onChange={(value) => setBundleName(value)}
