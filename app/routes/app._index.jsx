@@ -87,26 +87,26 @@ export const action = async ({ request }) => {
 };
 
 export default function Index() {
-  const fetcher = useFetcher();
-  const shopify = useAppBridge();
-  const isLoading =
-    ["loading", "submitting"].includes(fetcher.state) &&
-    fetcher.formMethod === "POST";
-  const productId = fetcher.data?.product?.id.replace(
-    "gid://shopify/Product/",
-    "",
-  );
+  // const fetcher = useFetcher();
+  // const shopify = useAppBridge();
+  // const isLoading =
+  //   ["loading", "submitting"].includes(fetcher.state) &&
+  //   fetcher.formMethod === "POST";
+  // const productId = fetcher.data?.product?.id.replace(
+  //   "gid://shopify/Product/",
+  //   "",
+  // );
 
-  useEffect(() => {
-    if (productId) {
-      shopify.toast.show("Product created");
-    }
-  }, [productId, shopify]);
-  const generateProduct = () => fetcher.submit({}, { method: "POST" });
+  // useEffect(() => {
+  //   if (productId) {
+  //     shopify.toast.show("Product created");
+  //   }
+  // }, [productId, shopify]);
+  // const generateProduct = () => fetcher.submit({}, { method: "POST" });
 
   return (
     <Page>
-      <TitleBar title="Remix app template">
+      {/* <TitleBar title="Remix app template">
         <button variant="primary" onClick={generateProduct}>
           Generate a product
         </button>
@@ -322,7 +322,8 @@ export default function Index() {
             </BlockStack>
           </Layout.Section>
         </Layout>
-      </BlockStack>
+      </BlockStack> */}
+      <h1>hello world</h1>
     </Page>
   );
 }

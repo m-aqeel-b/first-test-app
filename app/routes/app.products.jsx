@@ -17,6 +17,8 @@ import {
 import { useLoaderData, useActionData } from "@remix-run/react";
 import { authenticate } from "../shopify.server";
 import { useState, useCallback } from "react";
+import db from "../db.server";
+//
 export async function loader({ request }) {
   const { admin } = await authenticate.admin(request);
 
@@ -57,13 +59,28 @@ export async function loader({ request }) {
   } = data;
   console.log("edges1:", edges);
   return edges;
+  return null;
+}
+
+export async function action({ request }) {
+  const formData = await request.formData();
+  console.log("hit2", formData.get("bundleName"));
+  //console.log("checkdb", db);
+  const savedData = await db.bundles.create({
+    data: {
+      name: formData.get("bundleName"),
+      discountType: formData.get("discountType"),
+      discountValue: formData.get("discountValue"),
+    },
+  });
+  return savedData;
 }
 
 const Products = () => {
   const getProducts = useLoaderData();
   const [active, setActive] = useState(false);
   const handleChange1 = useCallback(() => setActive(!active), [active]);
-  const activator = <Button onClick={handleChange1}>Open</Button>;
+  const activator = <Button onClick={handleChange1}>Add Bundle</Button>;
   const [bundleName, setBundleName] = useState("");
   const [discountType, setDiscountType] = useState("");
   const [discountValue, setDiscountValue] = useState("");
@@ -71,37 +88,54 @@ const Products = () => {
     { label: "Percentage", value: "percentage" },
     { label: "Fixed", value: "fixed" },
   ];
-  const handleSubmit = useCallback(() => {
-    console.log("form submited");
-  }, []);
-  // console.log("get product", getProducts);
-  // const rows = [
-  //   ["Emerald Silk Gown", "$875.00", 124689, 140, "$122,500.00"],
-  //   ["Mauve Cashmere Scarf", "$230.00", 124533, 83, "$19,090.00"],
-  //   [
-  //     "Navy Merino Wool Blazer with khaki chinos and yellow belt",
-  //     "$445.00",
-  //     124518,
-  //     32,
-  //     "$14,240.00",
-  //   ],
-  // ];
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    const formData = {
+      bundleName,
+      discountType,
+      discountValue,
+    };
+    const toSend = {
+      bundleName: formData.bundleName,
+      discountType: formData.discountType,
+      discountValue: formData.discountValue,
+      productIds: selectedProductIds,
+    };
+    await action(toSend);
+    // const { db } = await import("../db.server");
+    // await db.Bundles.create({
+    //   data: {
+    //     toSend,
+    //   },
+    // });
+
+    console.log("data to send", toSend);
+  };
+
   const [checked, setChecked] = useState({});
+  const [selectedProductIds, setSelectedProductIds] = useState([]);
   const handleChange = (id) => (newChecked) => {
     console.log("get is", id);
     setChecked((prev) => ({
       ...prev,
       [id]: newChecked,
     }));
+    if (newChecked) {
+      // Add product ID to the array
+      setSelectedProductIds((prevIds) => [...prevIds, id]);
+    } else {
+      // Remove product ID from the array
+      setSelectedProductIds((prevIds) => prevIds.filter((id1) => id1 !== id));
+    }
   };
-
+  //console.log("stored ids are: ", selectedProductIds);
   return (
     <Page fullWidth>
       <Layout>
         <ui-title-bar title="Products">
-          <button variant="primary" onclick="console.log('Primary action')">
+          {/* <button variant="primary" onclick="console.log('Primary action')">
             Add Bundle
-          </button>
+          </button> */}
         </ui-title-bar>
         <Layout.Section>
           {getProducts.map((product) => {
@@ -131,7 +165,13 @@ const Products = () => {
               title="Add Bundles For Products"
               primaryAction={{
                 content: "Add Bundle",
-                onAction: handleChange1,
+                onAction: () => {
+                  // Find the form element and submit it
+                  const formElement = document.querySelector("form");
+                  if (formElement) {
+                    formElement.submit();
+                  }
+                },
               }}
               secondaryActions={[
                 {
@@ -142,30 +182,29 @@ const Products = () => {
             >
               <Modal.Section>
                 <TextContainer>
-                  <Form onSubmit={handleSubmit}>
+                  <Form method="POST">
                     <FormLayout>
                       <TextField
                         value={bundleName}
-                        //onChange={handleBundleNameChange}
+                        onChange={(value) => setBundleName(value)}
                         label="Bundle Name"
-                        type="bundleName"
+                        name="bundleName"
                       />
 
                       <Select
                         label="Discount Type"
                         options={options}
-                        // onChange={handleSelectChange}
+                        onChange={(value) => setDiscountType(value)}
                         value={discountType}
+                        name="discountType"
                       />
 
                       <TextField
                         value={discountValue}
-                        //onChange={handleBundleNameChange}
+                        onChange={(value) => setDiscountValue(value)}
                         label="Discount Value"
-                        type="discountValue"
+                        name="discountValue"
                       />
-
-                      {/* <Button submit>Submit</Button> */}
                     </FormLayout>
                   </Form>
                 </TextContainer>

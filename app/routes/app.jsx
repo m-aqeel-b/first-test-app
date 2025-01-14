@@ -8,14 +8,14 @@ import { authenticate } from "../shopify.server";
 export const links = () => [{ rel: "stylesheet", href: polarisStyles }];
 
 export const loader = async ({ request }) => {
-  await authenticate.admin(request);
-
+  const test = await authenticate.admin(request);
+  console.log("test1", test);
   return { apiKey: process.env.SHOPIFY_API_KEY || "" };
 };
 
 export default function App() {
   const { apiKey } = useLoaderData();
-
+  //console.log("key is", apiKey);
   return (
     <AppProvider isEmbeddedApp apiKey={apiKey}>
       <NavMenu>
