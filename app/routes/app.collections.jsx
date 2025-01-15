@@ -1,11 +1,27 @@
-import { Layout, Card, Text, Page } from "@shopify/polaris";
+import {
+  Layout,
+  Card,
+  Text,
+  Page,
+  Checkbox,
+  Button,
+  Frame,
+  Modal,
+  TextContainer,
+  Form,
+  TextField,
+  FormLayout,
+  Select,
+} from "@shopify/polaris";
 import { useLoaderData, json } from "@remix-run/react";
 import React from "react";
 import { authenticate } from "../shopify.server";
+import { useState, useCallback } from "react";
+import db from "../db.server";
 
 export async function loader({ request }) {
   const { admin } = await authenticate.admin(request);
-  console.log("hit", admin);
+  // console.log("hit", admin);
   const response = await admin.graphql(
     `#graphql
     query 
@@ -32,12 +48,75 @@ export async function loader({ request }) {
   return edges;
 }
 
+export async function action({ request }) {
+  const formData = await request.formData();
+  console.log("hit2", formData);
+  //console.log("checkdb", db);
+  const savedData = await db.bundles.create({
+    data: {
+      name: formData.get("bundleName"),
+      discountType: formData.get("discountType"),
+      discountValue: formData.get("discountValue"),
+    },
+  });
+  console.log("saved1", formData.get("selectedCollectionIds"));
+  const collectionIds = formData.get("selectedCollectionIds").split(",");
+  console.log("check11", savedData.id);
+  const savedEntries = await Promise.all(
+    collectionIds.map(async (collectionId) => {
+      // Save each product ID separately to the database
+      console.log("coll", collectionId);
+      return await db.BundleCollections.create({
+        data: {
+          collectionId: collectionId.trim(), // Remove any extra spaces
+          bundleId: savedData.id,
+        },
+      });
+    }),
+  );
+
+  return savedData;
+}
+
 const collections = () => {
   const getCollections = useLoaderData();
-  console.log("check", getCollections);
+  const [checked, setChecked] = useState({});
+  const [selectedCollectionIds, setSelectedCollectionIds] = useState([]);
+  const handleChange = (id) => (newChecked) => {
+    console.log("get is", id);
+    setChecked((prev) => ({
+      ...prev,
+      [id]: newChecked,
+    }));
+    if (newChecked) {
+      // Add product ID to the array
+      setSelectedCollectionIds((prevIds) => [...prevIds, id]);
+    } else {
+      // Remove product ID from the array
+      setSelectedCollectionIds((prevIds) =>
+        prevIds.filter((id1) => id1 !== id),
+      );
+    }
+  };
+
+  const [active, setActive] = useState(false);
+  const handleChange1 = useCallback(() => setActive(!active), [active]);
+  const activator = <Button onClick={handleChange1}>Add Bundle</Button>;
+  const [bundleName, setBundleName] = useState("");
+  const [discountType, setDiscountType] = useState("");
+  const [discountValue, setDiscountValue] = useState("");
+  const options = [
+    { label: "Percentage", value: "percentage" },
+    { label: "Fixed", value: "fixed" },
+  ];
   return (
     <Page fullWidth>
       <Layout>
+        <ui-title-bar title="Collections">
+          {/* <button variant="primary" onclick="console.log('Primary action')">
+            Add Bundle
+          </button> */}
+        </ui-title-bar>
         <Layout.Section>
           {(getCollections ?? []).map((collection) => {
             return (
@@ -46,11 +125,77 @@ const collections = () => {
                 sectioned
                 key={collection.node.id}
               >
-                <p>{collection.node.title}</p>
+                <p>
+                  <Checkbox
+                    label={collection.node.title}
+                    checked={checked[collection.node.id] || false}
+                    onChange={handleChange(collection.node.id)}
+                  />
+                </p>
               </Card>
             );
           })}
         </Layout.Section>
+        <div style={{ height: "500px" }}>
+          <Frame>
+            <Modal
+              activator={activator}
+              open={active}
+              onClose={handleChange1}
+              title="Add Bundles For Collections"
+              primaryAction={{
+                content: "Add Bundle",
+                onAction: () => {
+                  // Find the form element and submit it
+                  const formElement = document.querySelector("form");
+                  if (formElement) {
+                    formElement.submit();
+                  }
+                },
+              }}
+              secondaryActions={[
+                {
+                  content: "Cancel",
+                  onAction: handleChange1,
+                },
+              ]}
+            >
+              <Modal.Section>
+                <TextContainer>
+                  <Form method="POST">
+                    <FormLayout>
+                      <TextField
+                        value={selectedCollectionIds}
+                        name="selectedCollectionIds"
+                      />
+                      <TextField
+                        value={bundleName}
+                        onChange={(value) => setBundleName(value)}
+                        label="Bundle Name"
+                        name="bundleName"
+                      />
+
+                      <Select
+                        label="Discount Type"
+                        options={options}
+                        onChange={(value) => setDiscountType(value)}
+                        value={discountType}
+                        name="discountType"
+                      />
+
+                      <TextField
+                        value={discountValue}
+                        onChange={(value) => setDiscountValue(value)}
+                        label="Discount Value"
+                        name="discountValue"
+                      />
+                    </FormLayout>
+                  </Form>
+                </TextContainer>
+              </Modal.Section>
+            </Modal>
+          </Frame>
+        </div>
       </Layout>
     </Page>
   );

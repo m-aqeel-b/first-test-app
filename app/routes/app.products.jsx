@@ -102,29 +102,6 @@ const Products = () => {
     { label: "Percentage", value: "percentage" },
     { label: "Fixed", value: "fixed" },
   ];
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-    const formData = {
-      bundleName,
-      discountType,
-      discountValue,
-    };
-    const toSend = {
-      bundleName: formData.bundleName,
-      discountType: formData.discountType,
-      discountValue: formData.discountValue,
-      productIds: selectedProductIds,
-    };
-    await action(toSend);
-    // const { db } = await import("../db.server");
-    // await db.Bundles.create({
-    //   data: {
-    //     toSend,
-    //   },
-    // });
-
-    console.log("data to send", toSend);
-  };
 
   const [checked, setChecked] = useState({});
   const [selectedProductIds, setSelectedProductIds] = useState([]);

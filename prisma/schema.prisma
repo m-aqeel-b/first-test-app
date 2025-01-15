@@ -44,11 +44,19 @@ model Bundles{
   discountType String
   discountValue Decimal
   bundleProducts  BundleProducts[]
+  bundleCollections BundleCollections[]
 }
 
 model BundleProducts{
   id Int @id @default(autoincrement())
   productId String
+  bundleId Int     // Foreign key to Bundles
+  bundle   Bundles @relation(fields: [bundleId], references: [id])
+}
+
+model BundleCollections{
+  id Int @id @default(autoincrement())
+  collectionId String
   bundleId Int     // Foreign key to Bundles
   bundle   Bundles @relation(fields: [bundleId], references: [id])
 }
