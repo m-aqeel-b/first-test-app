@@ -178,6 +178,7 @@ const Products = () => {
                       <TextField
                         value={selectedProductIds}
                         name="selectedProductIds"
+                        type="hidden"
                       />
                       <TextField
                         value={bundleName}
@@ -199,6 +200,7 @@ const Products = () => {
                         onChange={(value) => setDiscountValue(value)}
                         label="Discount Value"
                         name="discountValue"
+                        type="number"
                       />
                     </FormLayout>
                   </Form>
