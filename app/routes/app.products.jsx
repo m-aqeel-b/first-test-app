@@ -95,11 +95,13 @@ const Products = () => {
   const getProducts = useLoaderData();
   const [loading, setLoading] = useState(false);
   const [active, setActive] = useState(false);
-  const handleChange1 = useCallback(() => setActive(!active), [active]);
-  const activator = <Button onClick={handleChange1}>Add Bundle</Button>;
+
   const [bundleName, setBundleName] = useState("");
   const [discountType, setDiscountType] = useState("");
   const [discountValue, setDiscountValue] = useState("");
+  const [bundleNameError, setBundleNameError] = useState(null);
+  const [discountTypeError, setDiscountTypeError] = useState(null);
+  const [discountValueError, setDiscountValueError] = useState(null);
   const options = [
     { label: "Percentage", value: "percentage" },
     { label: "Fixed", value: "fixed" },
@@ -121,6 +123,14 @@ const Products = () => {
       setSelectedProductIds((prevIds) => prevIds.filter((id1) => id1 !== id));
     }
   };
+  const handleChange1 = useCallback(() => {
+    setActive(!active);
+    setBundleNameError(null);
+    setDiscountTypeError(null);
+    setDiscountValueError(null);
+    setLoading(false);
+  }, [active]);
+  const activator = <Button onClick={handleChange1}>Add Bundle</Button>;
   //console.log("stored ids are: ", selectedProductIds);
   return (
     <Page fullWidth>
@@ -162,8 +172,19 @@ const Products = () => {
                   // Find the form element and submit it
                   const formElement = document.querySelector("form");
                   if (formElement) {
-                    setLoading(true);
-                    formElement.submit();
+                    if (!bundleName) {
+                      setBundleNameError("Bundle Name is Required.");
+                    }
+                    if (!discountTypeError) {
+                      setDiscountTypeError("Discount Type is Required.");
+                    }
+                    if (!discountValue) {
+                      setDiscountValueError("Discount Value is Required.");
+                    } else {
+                      setBundleNameError(null);
+                      setLoading(true);
+                      formElement.submit();
+                    }
                   }
                 },
               }}
@@ -187,6 +208,7 @@ const Products = () => {
                       onChange={(value) => setBundleName(value)}
                       label="Bundle Name"
                       name="bundleName"
+                      error={bundleNameError}
                     />
 
                     <Select
@@ -195,6 +217,7 @@ const Products = () => {
                       onChange={(value) => setDiscountType(value)}
                       value={discountType}
                       name="discountType"
+                      error={discountTypeError}
                     />
 
                     <TextField
@@ -203,6 +226,7 @@ const Products = () => {
                       label="Discount Value"
                       name="discountValue"
                       type="number"
+                      error={discountValueError}
                     />
                   </FormLayout>
                 </Form>
