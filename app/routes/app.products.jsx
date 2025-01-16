@@ -128,6 +128,9 @@ const Products = () => {
     setBundleNameError(null);
     setDiscountTypeError(null);
     setDiscountValueError(null);
+    setBundleName("");
+    setDiscountType("");
+    setDiscountValue("");
     setLoading(false);
   }, [active]);
   const activator = <Button onClick={handleChange1}>Add Bundle</Button>;

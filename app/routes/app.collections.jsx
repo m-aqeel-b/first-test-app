@@ -104,16 +104,29 @@ const collections = () => {
   };
 
   const [active, setActive] = useState(false);
-  const handleChange1 = useCallback(() => setActive(!active), [active]);
-  const activator = <Button onClick={handleChange1}>Add Bundle</Button>;
+
   const [bundleName, setBundleName] = useState("");
   const [discountType, setDiscountType] = useState("");
   const [discountValue, setDiscountValue] = useState("");
+  const [bundleNameError, setBundleNameError] = useState(null);
+  const [discountTypeError, setDiscountTypeError] = useState(null);
+  const [discountValueError, setDiscountValueError] = useState(null);
 
   const options = [
     { label: "Percentage", value: "percentage" },
     { label: "Fixed", value: "fixed" },
   ];
+  const handleChange1 = useCallback(() => {
+    setActive(!active);
+    setBundleNameError(null);
+    setDiscountTypeError(null);
+    setDiscountValueError(null);
+    setBundleName("");
+    setDiscountType("");
+    setDiscountValue("");
+    setLoading(false);
+  }, [active]);
+  const activator = <Button onClick={handleChange1}>Add Bundle</Button>;
   return (
     <Page fullWidth>
       <Layout>
@@ -154,8 +167,19 @@ const collections = () => {
                   // Find the form element and submit it
                   const formElement = document.querySelector("form");
                   if (formElement) {
-                    setLoading(true);
-                    formElement.submit();
+                    if (!bundleName) {
+                      setBundleNameError("Bundle Name is Required.");
+                    }
+                    if (!discountTypeError) {
+                      setDiscountTypeError("Discount Type is Required.");
+                    }
+                    if (!discountValue) {
+                      setDiscountValueError("Discount Value is Required.");
+                    } else {
+                      setBundleNameError(null);
+                      setLoading(true);
+                      formElement.submit();
+                    }
                   }
                 },
               }}
