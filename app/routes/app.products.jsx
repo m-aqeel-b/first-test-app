@@ -13,6 +13,7 @@ import {
   TextField,
   FormLayout,
   Select,
+  Spinner,
 } from "@shopify/polaris";
 import { useLoaderData, useActionData } from "@remix-run/react";
 import { authenticate } from "../shopify.server";
@@ -92,6 +93,7 @@ export async function action({ request }) {
 
 const Products = () => {
   const getProducts = useLoaderData();
+  const [loading, setLoading] = useState(false);
   const [active, setActive] = useState(false);
   const handleChange1 = useCallback(() => setActive(!active), [active]);
   const activator = <Button onClick={handleChange1}>Add Bundle</Button>;
@@ -155,11 +157,12 @@ const Products = () => {
               onClose={handleChange1}
               title="Add Bundles For Products"
               primaryAction={{
-                content: "Add Bundle",
+                content: loading ? <Spinner size="small" /> : "Add Bundle",
                 onAction: () => {
                   // Find the form element and submit it
                   const formElement = document.querySelector("form");
                   if (formElement) {
+                    setLoading(true);
                     formElement.submit();
                   }
                 },
@@ -172,39 +175,37 @@ const Products = () => {
               ]}
             >
               <Modal.Section>
-                <TextContainer>
-                  <Form method="POST">
-                    <FormLayout>
-                      <TextField
-                        value={selectedProductIds}
-                        name="selectedProductIds"
-                        type="hidden"
-                      />
-                      <TextField
-                        value={bundleName}
-                        onChange={(value) => setBundleName(value)}
-                        label="Bundle Name"
-                        name="bundleName"
-                      />
+                <Form method="POST">
+                  <FormLayout>
+                    <TextField
+                      value={selectedProductIds}
+                      name="selectedProductIds"
+                      type="hidden"
+                    />
+                    <TextField
+                      value={bundleName}
+                      onChange={(value) => setBundleName(value)}
+                      label="Bundle Name"
+                      name="bundleName"
+                    />
 
-                      <Select
-                        label="Discount Type"
-                        options={options}
-                        onChange={(value) => setDiscountType(value)}
-                        value={discountType}
-                        name="discountType"
-                      />
+                    <Select
+                      label="Discount Type"
+                      options={options}
+                      onChange={(value) => setDiscountType(value)}
+                      value={discountType}
+                      name="discountType"
+                    />
 
-                      <TextField
-                        value={discountValue}
-                        onChange={(value) => setDiscountValue(value)}
-                        label="Discount Value"
-                        name="discountValue"
-                        type="number"
-                      />
-                    </FormLayout>
-                  </Form>
-                </TextContainer>
+                    <TextField
+                      value={discountValue}
+                      onChange={(value) => setDiscountValue(value)}
+                      label="Discount Value"
+                      name="discountValue"
+                      type="number"
+                    />
+                  </FormLayout>
+                </Form>
               </Modal.Section>
             </Modal>
           </Frame>

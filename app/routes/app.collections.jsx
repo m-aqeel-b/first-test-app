@@ -12,6 +12,7 @@ import {
   TextField,
   FormLayout,
   Select,
+  Spinner,
 } from "@shopify/polaris";
 import { useLoaderData, json } from "@remix-run/react";
 import React from "react";
@@ -50,6 +51,8 @@ export async function loader({ request }) {
 
 export async function action({ request }) {
   const formData = await request.formData();
+
+  //setLoading(true);
   console.log("hit2", formData);
   //console.log("checkdb", db);
   const savedData = await db.bundles.create({
@@ -79,6 +82,7 @@ export async function action({ request }) {
 }
 
 const collections = () => {
+  const [loading, setLoading] = useState(false);
   const getCollections = useLoaderData();
   const [checked, setChecked] = useState({});
   const [selectedCollectionIds, setSelectedCollectionIds] = useState([]);
@@ -105,6 +109,7 @@ const collections = () => {
   const [bundleName, setBundleName] = useState("");
   const [discountType, setDiscountType] = useState("");
   const [discountValue, setDiscountValue] = useState("");
+
   const options = [
     { label: "Percentage", value: "percentage" },
     { label: "Fixed", value: "fixed" },
@@ -144,11 +149,12 @@ const collections = () => {
               onClose={handleChange1}
               title="Add Bundles For Collections"
               primaryAction={{
-                content: "Add Bundle",
+                content: loading ? <Spinner size="small" /> : "Add Bundle",
                 onAction: () => {
                   // Find the form element and submit it
                   const formElement = document.querySelector("form");
                   if (formElement) {
+                    setLoading(true);
                     formElement.submit();
                   }
                 },
@@ -161,40 +167,38 @@ const collections = () => {
               ]}
             >
               <Modal.Section>
-                <TextContainer>
-                  <Form method="POST">
-                    <FormLayout>
-                      <TextField
-                        value={selectedCollectionIds}
-                        name="selectedCollectionIds"
-                        labelHidden={true}
-                        type="hidden"
-                      />
-                      <TextField
-                        value={bundleName}
-                        onChange={(value) => setBundleName(value)}
-                        label="Bundle Name"
-                        name="bundleName"
-                      />
+                <Form method="POST">
+                  <FormLayout>
+                    <TextField
+                      value={selectedCollectionIds}
+                      name="selectedCollectionIds"
+                      labelHidden={true}
+                      type="hidden"
+                    />
+                    <TextField
+                      value={bundleName}
+                      onChange={(value) => setBundleName(value)}
+                      label="Bundle Name"
+                      name="bundleName"
+                    />
 
-                      <Select
-                        label="Discount Type"
-                        options={options}
-                        onChange={(value) => setDiscountType(value)}
-                        value={discountType}
-                        name="discountType"
-                      />
+                    <Select
+                      label="Discount Type"
+                      options={options}
+                      onChange={(value) => setDiscountType(value)}
+                      value={discountType}
+                      name="discountType"
+                    />
 
-                      <TextField
-                        value={discountValue}
-                        onChange={(value) => setDiscountValue(value)}
-                        label="Discount Value"
-                        name="discountValue"
-                        type="number"
-                      />
-                    </FormLayout>
-                  </Form>
-                </TextContainer>
+                    <TextField
+                      value={discountValue}
+                      onChange={(value) => setDiscountValue(value)}
+                      label="Discount Value"
+                      name="discountValue"
+                      type="number"
+                    />
+                  </FormLayout>
+                </Form>
               </Modal.Section>
             </Modal>
           </Frame>
