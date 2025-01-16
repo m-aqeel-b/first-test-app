@@ -204,6 +204,7 @@ const collections = () => {
                       onChange={(value) => setBundleName(value)}
                       label="Bundle Name"
                       name="bundleName"
+                      error={bundleNameError}
                     />
 
                     <Select
@@ -212,6 +213,7 @@ const collections = () => {
                       onChange={(value) => setDiscountType(value)}
                       value={discountType}
                       name="discountType"
+                      error={discountTypeError}
                     />
 
                     <TextField
@@ -220,6 +222,7 @@ const collections = () => {
                       label="Discount Value"
                       name="discountValue"
                       type="number"
+                      error={discountValueError}
                     />
                   </FormLayout>
                 </Form>

@@ -19,7 +19,8 @@ import { useLoaderData, useActionData } from "@remix-run/react";
 import { authenticate } from "../shopify.server";
 import { useState, useCallback } from "react";
 import db from "../db.server";
-//
+// import "../../public/style.css";
+
 export async function loader({ request }) {
   const { admin } = await authenticate.admin(request);
 
@@ -134,15 +135,12 @@ const Products = () => {
     setLoading(false);
   }, [active]);
   const activator = <Button onClick={handleChange1}>Add Bundle</Button>;
+
   //console.log("stored ids are: ", selectedProductIds);
   return (
     <Page fullWidth>
       <Layout>
-        <ui-title-bar title="Products">
-          {/* <button variant="primary" onclick="console.log('Primary action')">
-            Add Bundle
-          </button> */}
-        </ui-title-bar>
+        <ui-title-bar title="Products"></ui-title-bar>
         <Layout.Section>
           {getProducts.map((product) => {
             return (
