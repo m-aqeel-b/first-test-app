@@ -22,14 +22,15 @@ export default function App() {
         <Link to="/app" rel="home">
           Home
         </Link>
-        <Link to="/app/additional">Additional page</Link>
-        <Link to="/app/test">Test page</Link>
-        <Link to="/app/layout">Layout</Link>
+        {/* <Link to="/app/additKKKkional">Additional page</Link> */}
+        {/* <Link to="/app/test">Test page</Link> */}
+        {/* <Link to="/app/layout">Layout</Link> */}
         <Link to="/app/collections">Collections</Link>
-        <Link to="/app/createCollection">Create Collections</Link>
+        {/* <Link to="/app/createCollection">Create Collections</Link> */}
         <Link to="/app/products">Products</Link>
-        <Link to="/app/createProduct">Create Products</Link>
-        <Link to="/app/discounts">Add Discounts</Link>
+        <Link to="/app/bundles">Bundles</Link>
+        {/* <Link to="/app/createProduct">Create Products</Link> */}
+        {/* <Link to="/app/discounts">Add Discounts</Link> */}
       </NavMenu>
       <Outlet />
     </AppProvider>

@@ -111,8 +111,11 @@ const collections = () => {
   const [bundleNameError, setBundleNameError] = useState(null);
   const [discountTypeError, setDiscountTypeError] = useState(null);
   const [discountValueError, setDiscountValueError] = useState(null);
+  const [selectedCollectionIdsError, setSelectedCollectionIdsError] =
+    useState(null);
 
   const options = [
+    { label: "Select Discount Type", value: "" },
     { label: "Percentage", value: "percentage" },
     { label: "Fixed", value: "fixed" },
   ];
@@ -121,6 +124,7 @@ const collections = () => {
     setBundleNameError(null);
     setDiscountTypeError(null);
     setDiscountValueError(null);
+    setSelectedCollectionIdsError(null);
     setBundleName("");
     setDiscountType("");
     setDiscountValue("");
@@ -167,13 +171,15 @@ const collections = () => {
                   // Find the form element and submit it
                   const formElement = document.querySelector("form");
                   if (formElement) {
-                    if (!bundleName) {
+                    if (selectedCollectionIds.length <= 0) {
+                      setSelectedCollectionIdsError(
+                        "Plese select Some Collections",
+                      );
+                    } else if (!bundleName) {
                       setBundleNameError("Bundle Name is Required.");
-                    }
-                    if (!discountTypeError) {
+                    } else if (!discountType) {
                       setDiscountTypeError("Discount Type is Required.");
-                    }
-                    if (!discountValue) {
+                    } else if (!discountValue) {
                       setDiscountValueError("Discount Value is Required.");
                     } else {
                       setBundleNameError(null);
@@ -198,6 +204,7 @@ const collections = () => {
                       name="selectedCollectionIds"
                       labelHidden={true}
                       type="hidden"
+                      error={selectedCollectionIdsError}
                     />
                     <TextField
                       value={bundleName}

@@ -105,7 +105,7 @@ const Products = () => {
   const [discountValueError, setDiscountValueError] = useState(null);
   const [selectedProductIdsErro, setSelectedProductIdsError] = useState(null);
   const options = [
-    { label: "Select Discount Type", value: null },
+    { label: "Select Discount Type", value: "" },
     { label: "Percentage", value: "percentage" },
     { label: "Fixed", value: "fixed" },
   ];
