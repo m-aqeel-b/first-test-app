@@ -1,7 +1,7 @@
 # Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
 
 client_id = "4deb5609128ec7dc072c08245a5ca7c0"
-application_url = "https://symbols-tuesday-susan-arbor.trycloudflare.com"
+application_url = "https://enhancing-warehouse-hs-benchmark.trycloudflare.com"
 embedded = true
 name = "first-test-app"
 handle = "first-test-app-143"
@@ -24,9 +24,9 @@ scopes = "read_orders,read_product_listings,read_products,write_discounts,write_
 
 [auth]
 redirect_urls = [
-  "https://symbols-tuesday-susan-arbor.trycloudflare.com/auth/callback",
-  "https://symbols-tuesday-susan-arbor.trycloudflare.com/auth/shopify/callback",
-  "https://symbols-tuesday-susan-arbor.trycloudflare.com/api/auth/callback"
+  "https://enhancing-warehouse-hs-benchmark.trycloudflare.com/auth/callback",
+  "https://enhancing-warehouse-hs-benchmark.trycloudflare.com/auth/shopify/callback",
+  "https://enhancing-warehouse-hs-benchmark.trycloudflare.com/api/auth/callback"
 ]
 
 [pos]

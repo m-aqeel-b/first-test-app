@@ -103,7 +103,9 @@ const Products = () => {
   const [bundleNameError, setBundleNameError] = useState(null);
   const [discountTypeError, setDiscountTypeError] = useState(null);
   const [discountValueError, setDiscountValueError] = useState(null);
+  const [selectedProductIdsErro, setSelectedProductIdsError] = useState(null);
   const options = [
+    { label: "Select Discount Type", value: null },
     { label: "Percentage", value: "percentage" },
     { label: "Fixed", value: "fixed" },
   ];
@@ -129,6 +131,7 @@ const Products = () => {
     setBundleNameError(null);
     setDiscountTypeError(null);
     setDiscountValueError(null);
+    setSelectedProductIdsError(null);
     setBundleName("");
     setDiscountType("");
     setDiscountValue("");
@@ -173,16 +176,20 @@ const Products = () => {
                   // Find the form element and submit it
                   const formElement = document.querySelector("form");
                   if (formElement) {
-                    if (!bundleName) {
+                    console.log("checkp", discountTypeError);
+                    console.log("check2", bundleNameError);
+                    if (selectedProductIds.length <= 0) {
+                      setSelectedProductIdsError("Please Select Some Products");
+                    } else if (!bundleName) {
                       setBundleNameError("Bundle Name is Required.");
-                    }
-                    if (!discountTypeError) {
+                    } else if (!discountType) {
                       setDiscountTypeError("Discount Type is Required.");
-                    }
-                    if (!discountValue) {
+                    } else if (!discountValue) {
                       setDiscountValueError("Discount Value is Required.");
                     } else {
                       setBundleNameError(null);
+                      setDiscountTypeError(null);
+                      setDiscountValueError(null);
                       setLoading(true);
                       formElement.submit();
                     }
@@ -203,6 +210,7 @@ const Products = () => {
                       value={selectedProductIds}
                       name="selectedProductIds"
                       type="hidden"
+                      error={selectedProductIdsErro}
                     />
                     <TextField
                       value={bundleName}
