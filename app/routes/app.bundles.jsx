@@ -1,5 +1,5 @@
-import { useLoaderData } from "@remix-run/react";
-import { Card, DataTable, Layout, Page } from "@shopify/polaris";
+import { useLoaderData, useNavigate } from "@remix-run/react";
+import { Card, DataTable, Layout, Page, Button } from "@shopify/polaris";
 import React from "react";
 import db from "../db.server";
 
@@ -16,6 +16,7 @@ export async function loader() {
 
 const bundles = () => {
   const getBundleList = useLoaderData();
+  const navigate = useNavigate();
   console.log("b1", getBundleList);
   const tableRows = getBundleList.map((bundle) => [
     bundle.name,
@@ -23,6 +24,19 @@ const bundles = () => {
     bundle.discountValue,
     bundle.bundleProducts.length,
     bundle.bundleCollections.length,
+    <Button
+      onClick={() => {
+        if (bundle.bundleProducts.length > 0) {
+          navigate(`/app/bundleProducts/${bundle.id}`);
+        }
+        if (bundle.bundleCollections.length > 0) {
+          navigate(`/app/bundles/collections/${bundle.id}`);
+        }
+      }}
+      size="slim"
+    >
+      Edit
+    </Button>,
   ]);
   return (
     <Page fullWidth>
@@ -37,6 +51,7 @@ const bundles = () => {
                 "numeric",
                 "numeric",
                 "numeric",
+                "numeric",
               ]}
               headings={[
                 "Name",
@@ -44,6 +59,7 @@ const bundles = () => {
                 "Discount Value",
                 "Number of Products",
                 "Number of Collections",
+                "Action",
               ]}
               rows={tableRows}
             />
