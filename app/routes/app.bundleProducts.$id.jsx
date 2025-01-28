@@ -31,46 +31,64 @@ export async function loader({ params, request }) {
   const productsList = [];
 
   if (getBundleProducts?.bundleProducts?.length > 0) {
-    const productRequests = await getBundleProducts.bundleProducts.map(
-      (product) => {
-        console.log("idd", product.productId);
-        return admin
-          .graphql(
-            `#graphql
+    // Map product requests to promises
+    const productRequests = getBundleProducts.bundleProducts.map((product) => {
+      console.log("Product ID:", product.productId);
+
+      // Return the promise for each GraphQL request
+      return admin
+        .graphql(
+          `#graphql
           query {
-            node(id: "${product.productId}") {
+            node(id: "gid://shopify/Product/7586409349327") {
               ... on Product {
                 id
                 title
               }
             }
           }`,
-          )
-          .then((response) => {
-            console.log(
-              "Raw GraphQL Response:",
-              JSON.stringify(response, null, 2),
-            );
-            if (response.errors) {
-              console.error("GraphQL Errors:", response.errors);
-            }
-            return response;
-          });
-      },
-    );
-    console.log("a11", JSON.stringify(productRequests, null, 2));
-    // Execute all requests concurrently
-    const responses = await Promise.all(productRequests);
-    console.log("y2", JSON.stringify(responses, null, 2));
-    // Extract product titles from responses
-    responses.forEach((response) => {
-      const productData = response.body?.data?.node; // Adjust path as per your API client
-      if (productData) {
-        console.log("h111", productData.title);
-        productsList.push(productData.title);
-      }
+        )
+        .then((response) => {
+          console.log(
+            "Full GraphQL Response:",
+            JSON.stringify(response, null, 2),
+          ); // Log the full response
+          if (response.errors) {
+            console.error("GraphQL Errors:", response.errors);
+            throw new Error("GraphQL query failed");
+          }
+          return response; // Return the full response for further processing
+        })
+        .catch((error) => {
+          console.error("GraphQL Request Failed:", error);
+          return null; // Return null in case of a failed request
+        });
     });
+
+    try {
+      // Execute all requests concurrently
+      const responses = await Promise.all(productRequests);
+
+      console.log("All Responses:", JSON.stringify(responses, null, 2));
+
+      // Extract product titles from the responses
+      responses.forEach((response) => {
+        if (response && response.data?.node) {
+          // Access `data` directly
+          const productData = response.data.node;
+          console.log("Product Data:", productData);
+          productsList.push(productData.title); // Push title to the products list
+        } else {
+          console.warn("Invalid response or missing product data");
+        }
+      });
+    } catch (error) {
+      console.error("Error fetching product data:", error);
+    }
   }
+
+  // Final list of product titles
+  console.log("Product Titles:", productsList);
 
   console.log("g2", productsList);
   return json({ getBundleProducts, productsList });
@@ -78,7 +96,7 @@ export async function loader({ params, request }) {
 
 export async function action({ request }) {
   const formData = await request.formData();
-  console.log("hit2", formData);
+  //console.log("hit2", formData);
   const getBundle = await db.bundles.findUnique({
     where: {
       id: parseInt(formData.get("bundleId")),
@@ -137,7 +155,7 @@ const bundleProducts = () => {
     setBundleName(data?.getBundleProducts?.name);
     setDiscountType(data?.getBundleProducts?.discountType);
     setDiscountValue(data?.getBundleProducts?.discountValue);
-    console.log("bname", bundleId);
+    //console.log("bname", bundleId);
     setActive(!active);
     setBundleNameError(null);
     setDiscountTypeError(null);
