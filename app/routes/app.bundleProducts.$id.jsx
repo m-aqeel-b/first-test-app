@@ -123,10 +123,9 @@ const bundleProducts = () => {
     setBundleNameError(null);
     setDiscountTypeError(null);
     setDiscountValueError(null);
-
-    setBundleName("");
-    setDiscountType("");
-    setDiscountValue("");
+    // setBundleName("");
+    // setDiscountType("");
+    // setDiscountValue("");
     setLoading(false);
     console.log("Updated Values:", {
       bundleId: bundleId,
