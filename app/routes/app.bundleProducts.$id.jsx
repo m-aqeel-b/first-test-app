@@ -79,7 +79,26 @@ export async function loader({ params, request }) {
 export async function action({ request }) {
   const formData = await request.formData();
   console.log("hit2", formData);
-  //console.log("checkdb", db);
+  const getBundle = await db.bundles.findUnique({
+    where: {
+      id: parseInt(formData.get("bundleId")),
+    },
+  });
+  if (getBundle) {
+    const updatedBundle = await db.bundles.update({
+      where: {
+        id: parseInt(formData.get("bundleId")),
+      },
+      data: {
+        name: formData.get("name"),
+        discountType: formData.get("discountType"),
+        discountValue: parseFloat(formData.get("discountValue")),
+      },
+    });
+  } else {
+    console.log("Bundle not found");
+  }
+
   // const savedData = await db.bundles.create({
   //   data: {
   //     name: formData.get("bundleName"),
@@ -89,7 +108,7 @@ export async function action({ request }) {
   // });
   // console.log("saved", savedData);
 
-  return null;
+  return getBundle;
 }
 
 const bundleProducts = () => {
@@ -123,17 +142,9 @@ const bundleProducts = () => {
     setBundleNameError(null);
     setDiscountTypeError(null);
     setDiscountValueError(null);
-    // setBundleName("");
-    // setDiscountType("");
-    // setDiscountValue("");
+
     setLoading(false);
-    console.log("Updated Values:", {
-      bundleId: bundleId,
-      bundleName: bundleName,
-      discountType: discountType,
-      discountValue: discountValue,
-    });
-  }, [active]);
+  }, [data, active]);
   useEffect(() => {
     console.log("State Updated:", {
       bundleId,
@@ -169,9 +180,9 @@ const bundleProducts = () => {
                 activator={activator}
                 open={active}
                 onClose={handleChange1}
-                title="Add Bundles For Products"
+                title="Edit Bundles For Products"
                 primaryAction={{
-                  content: loading ? <Spinner size="small" /> : "Add Bundle",
+                  content: loading ? <Spinner size="small" /> : "Edit Bundle",
                   onAction: () => {
                     // Find the form element and submit it
                     const formElement = document.querySelector("form");
@@ -204,7 +215,11 @@ const bundleProducts = () => {
                 <Modal.Section>
                   <Form method="POST">
                     <FormLayout>
-                      <TextField value={bundleId} name="bundId" />
+                      <TextField
+                        value={bundleId}
+                        name="bundleId"
+                        type="hidden"
+                      />
 
                       <TextField
                         value={bundleName}
