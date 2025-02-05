@@ -40,7 +40,7 @@ export async function loader({ params, request }) {
         .graphql(
           `#graphql
           query {
-            node(id: "gid://shopify/Product/7586409349327") {
+            node(id: "gid://shopify/Product/7586415542479") {
               ... on Product {
                 id
                 title
