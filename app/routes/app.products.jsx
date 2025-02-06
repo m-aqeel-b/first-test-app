@@ -115,12 +115,12 @@ export async function action({ request }) {
             target_type: "line_item",
             target_selection: "entitled",
             allocation_method: "across",
-            value_type: savedData.discountType, // Use "fixed_amount" for fixed discounts
-            //value: savedData.discountValue, // Negative value for discount (e.g., -10% discount)
-            value: savedData.discountValue * -1, // Negative value for discount (e.g., -10% discount)
+            value_type: savedData.discountType,
+            //value: savedData.discountValue,
+            value: savedData.discountValue * -1,
             customer_selection: "all",
             starts_at: new Date().toISOString(),
-            entitled_product_ids: finalProductIds, // Replace with product IDs
+            entitled_product_ids: finalProductIds,
           },
         }),
       },
