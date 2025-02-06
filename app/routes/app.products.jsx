@@ -93,9 +93,10 @@ export async function action({ request }) {
   console.log("pids", productIds);
 
   const SHOPIFY_STORE_URL = "https://aqeel-njs-store.myshopify.com";
-  // const SHOPIFY_STORE_URL = "https://admin.shopify.com/store/aqeel-njs-store/";
+  // const SHOPIFY_STORE_URL = "https://admin.shopify.com/store/aqeel-njs-store";
   const API_ACCESS_TOKEN = "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";
-  const API_VERSION = "first-test-app-6";
+  // const API_VERSION = "first-test-app-6";
+  const API_VERSION = "2025-01";
 
   const createPriceRule = async () => {
     const response = await fetch(
@@ -113,10 +114,11 @@ export async function action({ request }) {
             target_selection: "entitled",
             allocation_method: "across",
             value_type: savedData.discountType, // Use "fixed_amount" for fixed discounts
-            value: savedData.discountValue, // Negative value for discount (e.g., -10% discount)
+            //value: savedData.discountValue, // Negative value for discount (e.g., -10% discount)
+            value: "-150", // Negative value for discount (e.g., -10% discount)
             customer_selection: "all",
             starts_at: new Date().toISOString(),
-            entitled_product_ids: ["gid://shopify/Product/7596326912207"], // Replace with product IDs
+            entitled_product_ids: [7596326912207], // Replace with product IDs
           },
         }),
       },
@@ -126,8 +128,29 @@ export async function action({ request }) {
     console.log("ap data", data);
     // const data = await response.json();
     // console.log(data);
+
+    const priceRuleId = data.price_rule.id;
+    const responseDiscountCode = await fetch(
+      `${SHOPIFY_STORE_URL}/admin/api/${API_VERSION}/price_rules/${priceRuleId}/discount_codes.json`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-Shopify-Access-Token": API_ACCESS_TOKEN,
+        },
+        body: JSON.stringify({
+          discount_code: {
+            code: "MYDISCOUNT2024", // Set your discount code here
+          },
+        }),
+      },
+    );
+
+    const dataDiscountCode = await responseDiscountCode.json();
+    console.log("Discount Code Data:", dataDiscountCode);
   };
   createPriceRule();
+
   return savedData;
 }
 
@@ -146,7 +169,7 @@ const Products = () => {
   const options = [
     { label: "Select Discount Type", value: "" },
     { label: "Percentage", value: "percentage" },
-    { label: "Fixed", value: "fixed" },
+    { label: "Fixed", value: "fixed_amount" },
   ];
 
   const [checked, setChecked] = useState({});
