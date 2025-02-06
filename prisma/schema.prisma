@@ -41,6 +41,7 @@ model Customer {
 model Bundles{
   id Int @id @default(autoincrement())
   name String
+  discountCode String
   discountType String
   discountValue Decimal
   bundleProducts  BundleProducts[]

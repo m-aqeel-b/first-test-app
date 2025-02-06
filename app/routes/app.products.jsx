@@ -28,7 +28,7 @@ export async function loader({ request }) {
   const response = await admin.graphql(
     `#graphql
     query {
-      products(first: 5, reverse: true) {
+      products(first: 100, reverse: true) {
         edges {
           node {
             id
@@ -75,6 +75,7 @@ export async function action({ request }) {
       name: formData.get("bundleName"),
       discountType: formData.get("discountType"),
       discountValue: formData.get("discountValue"),
+      discountCode: formData.get("discountCode"),
     },
   });
   console.log("saved", savedData);
@@ -91,6 +92,7 @@ export async function action({ request }) {
     }),
   );
   console.log("pids", productIds);
+  const finalProductIds = productIds.map((pid) => pid.split("/").pop());
 
   const SHOPIFY_STORE_URL = "https://aqeel-njs-store.myshopify.com";
   // const SHOPIFY_STORE_URL = "https://admin.shopify.com/store/aqeel-njs-store";
@@ -115,10 +117,10 @@ export async function action({ request }) {
             allocation_method: "across",
             value_type: savedData.discountType, // Use "fixed_amount" for fixed discounts
             //value: savedData.discountValue, // Negative value for discount (e.g., -10% discount)
-            value: "-150", // Negative value for discount (e.g., -10% discount)
+            value: savedData.discountValue * -1, // Negative value for discount (e.g., -10% discount)
             customer_selection: "all",
             starts_at: new Date().toISOString(),
-            entitled_product_ids: [7596326912207], // Replace with product IDs
+            entitled_product_ids: finalProductIds, // Replace with product IDs
           },
         }),
       },
@@ -140,7 +142,7 @@ export async function action({ request }) {
         },
         body: JSON.stringify({
           discount_code: {
-            code: "MYDISCOUNT2024", // Set your discount code here
+            code: savedData.discountCode, // Set your discount code here
           },
         }),
       },
@@ -162,9 +164,11 @@ const Products = () => {
   const [bundleName, setBundleName] = useState("");
   const [discountType, setDiscountType] = useState("");
   const [discountValue, setDiscountValue] = useState("");
+  const [discountCode, setDiscountCode] = useState("");
   const [bundleNameError, setBundleNameError] = useState(null);
   const [discountTypeError, setDiscountTypeError] = useState(null);
   const [discountValueError, setDiscountValueError] = useState(null);
+  const [discountCodeError, setDiscountCodeError] = useState(null);
   const [selectedProductIdsErro, setSelectedProductIdsError] = useState(null);
   const options = [
     { label: "Select Discount Type", value: "" },
@@ -193,10 +197,12 @@ const Products = () => {
     setBundleNameError(null);
     setDiscountTypeError(null);
     setDiscountValueError(null);
+    setDiscountCodeError(null);
     setSelectedProductIdsError(null);
     setBundleName("");
     setDiscountType("");
     setDiscountValue("");
+    setDiscountCode("");
     setLoading(false);
   }, [active]);
   const activator = <Button onClick={handleChange1}>Add Bundle</Button>;
@@ -248,10 +254,13 @@ const Products = () => {
                       setDiscountTypeError("Discount Type is Required.");
                     } else if (!discountValue) {
                       setDiscountValueError("Discount Value is Required.");
+                    } else if (!discountCode) {
+                      setDiscountCodeError("Discount Code is Required.");
                     } else {
                       setBundleNameError(null);
                       setDiscountTypeError(null);
                       setDiscountValueError(null);
+                      setDiscountCodeError(null);
                       setLoading(true);
                       formElement.submit();
                     }
@@ -298,6 +307,14 @@ const Products = () => {
                       name="discountValue"
                       type="number"
                       error={discountValueError}
+                    />
+
+                    <TextField
+                      value={discountCode}
+                      onChange={(value) => setDiscountCode(value)}
+                      label="Discount Code"
+                      name="discountCode"
+                      error={discountCodeError}
                     />
                   </FormLayout>
                 </Form>
