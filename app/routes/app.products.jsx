@@ -78,7 +78,7 @@ export async function action({ request }) {
       discountCode: formData.get("discountCode"),
     },
   });
-  console.log("saved", savedData);
+  //console.log("saved", savedData);
   const productIds = formData.get("selectedProductIds").split(",");
   const savedEntries = await Promise.all(
     productIds.map(async (productId) => {
