@@ -1,7 +1,7 @@
 # Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
 
 client_id = "4deb5609128ec7dc072c08245a5ca7c0"
-application_url = "https://g-converted-hash-data.trycloudflare.com"
+application_url = "https://genre-increased-defining-base.trycloudflare.com"
 embedded = true
 name = "first-test-app"
 handle = "first-test-app-143"
@@ -24,9 +24,9 @@ scopes = "read_orders,read_product_listings,read_products,write_discounts,write_
 
 [auth]
 redirect_urls = [
-  "https://g-converted-hash-data.trycloudflare.com/auth/callback",
-  "https://g-converted-hash-data.trycloudflare.com/auth/shopify/callback",
-  "https://g-converted-hash-data.trycloudflare.com/api/auth/callback"
+  "https://genre-increased-defining-base.trycloudflare.com/auth/callback",
+  "https://genre-increased-defining-base.trycloudflare.com/auth/shopify/callback",
+  "https://genre-increased-defining-base.trycloudflare.com/api/auth/callback"
 ]
 
 [pos]
