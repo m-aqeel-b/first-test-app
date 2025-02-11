@@ -1,0 +1,23 @@
+# query RunInput {
+#   discountNode {
+#     metafield(namespace: "$app:order-discount", key: "function-configuration") {
+#       value
+#     }
+#   }
+# }
+
+query RunInput {
+  cart {
+    lines {
+      id
+      merchandise {
+        __typename
+        ... on ProductVariant {
+          product {
+            id
+          }
+        }
+      }
+    }
+  }
+}
