@@ -8,8 +8,10 @@
 query RunInput {
   cart {
     lines {
-      attribute(key: "_bundle_discount") {
-        key
+      bundleDiscount: attribute(key: "_bundle_discount") {
+        value
+      }
+      bundleType: attribute(key: "_bundle_type") {
         value
       }
       id

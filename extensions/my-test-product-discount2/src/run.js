@@ -4,11 +4,12 @@ export const run = (input) => {
   const discounts = [];
 
   const bundleItems = input.cart.lines.filter(item => {
-    return item?.attribute?.key === '_bundle_discount';
+    return item?.bundleType?.value == 'percentage_discount';
   })
 
   bundleItems.forEach((lineItem) => {
-      const bundleValue = lineItem?.attribute?.value;
+      const bundleValue = lineItem?.bundleDiscount?.value;
+      console.log("check",bundleValue)
       discounts.push({
         targets: [{ productVariant: { id: lineItem.merchandise.id } }],
         value: {
@@ -18,9 +19,10 @@ export const run = (input) => {
         },
       });
   });
+  console.log("discount value",discounts.length)
 
   return { 
     discounts,  
-    discountApplicationStrategy: DiscountApplicationStrategy.First,
+    discountApplicationStrategy: DiscountApplicationStrategy.All,
   };
 };
