@@ -1,7 +1,7 @@
 # Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
 
 client_id = "4deb5609128ec7dc072c08245a5ca7c0"
-application_url = "https://always-oriented-psychiatry-bufing.trycloudflare.com"
+application_url = "https://ottawa-heavy-kept-apps.trycloudflare.com"
 embedded = true
 name = "first-test-app"
 handle = "first-test-app-143"
@@ -20,13 +20,13 @@ api_version = "2024-10"
 
 [access_scopes]
 # Learn more at https://shopify.dev/docs/apps/tools/cli/configuration#access_scopes
-scopes = "read_orders,read_product_listings,read_products,write_discounts,write_price_rules,write_product_listings,write_products"
+scopes = "read_orders,read_product_listings,read_products,write_discounts,write_price_rules,write_product_listings,write_products,write_cart_transforms"
 
 [auth]
 redirect_urls = [
-  "https://always-oriented-psychiatry-bufing.trycloudflare.com/auth/callback",
-  "https://always-oriented-psychiatry-bufing.trycloudflare.com/auth/shopify/callback",
-  "https://always-oriented-psychiatry-bufing.trycloudflare.com/api/auth/callback"
+  "https://ottawa-heavy-kept-apps.trycloudflare.com/auth/callback",
+  "https://ottawa-heavy-kept-apps.trycloudflare.com/auth/shopify/callback",
+  "https://ottawa-heavy-kept-apps.trycloudflare.com/api/auth/callback"
 ]
 
 [pos]
