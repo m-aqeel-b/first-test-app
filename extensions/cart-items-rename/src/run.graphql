@@ -1,8 +1,24 @@
+# # query RunInput {
+# #   cart {
+# #     lines {
+# #       id
+# #       quantity
+# #     }
+# #   }
+# # }
+
 # query RunInput {
 #   cart {
 #     lines {
 #       id
-#       quantity
+#       merchandise {
+#         ... on ProductVariant {
+#           __typename
+#           product {
+#             title
+#           }
+#         }
+#       }
 #     }
 #   }
 # }
@@ -13,8 +29,9 @@ query RunInput {
       id
       merchandise {
         ... on ProductVariant {
-          __typename
+          id
           product {
+            id
             title
           }
         }
