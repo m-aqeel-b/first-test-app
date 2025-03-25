@@ -65,34 +65,79 @@ function isProductVariant(merchandise) {
  * @param {Object} input - The cart input object
  * @returns {Object} - The function run result with operations
  */
+// export function run(input) {
+//   const operations = [];
+
+//   if (input.cart.lines.length >= 3) {
+//     const parentItem = input.cart.lines[0];
+//     const childItems = input.cart.lines.slice(1);
+
+//     childItems.forEach((item) => {
+//       operations.push({
+//         update: {
+//           cartLineId: item?.id,
+//           marchandise: {
+//             attributes: [{ key: "_child_id", value: item?.id }],
+//           },
+//           //title: `included in ${item.merchandise.product.title}`,
+//           title: item.merchandise?.product.title,
+//         },
+//       });
+//     });
+
+//     operations.push({
+//       update: {
+//         cartLineId: parentItem?.id,
+//         merchandise: {
+//           attributes: [{ key: "_parent_id", value: parentItem?.id }],
+//         },
+//         //title: `Bundle: ${parentItem.merchandise.product.title}`,
+//         title: parentItem.merchandise?.product.title,
+//       },
+//     });
+//   }
+
+//   return { operations };
+// }
+
+// This function transforms a cart with 3+ items into a merged bundle
 export function run(input) {
-  const operations = [];
-
-  if (input.cart.lines.length >= 3) {
-    const cartItems = input.cart.lines.filter((item) =>
-      isProductVariant(item.merchandise),
-    );
-
-    const parentItem = input.cart.lines[0];
-    const childItems = input.cart.lines.slice(1);
-
-    childItems.forEach((item) => {
-      operations.push({
-        update: {
-          cartLineId: item.id,
-          attributes: [{ key: "_parent_id", value: parentItem.id }],
-          title: `included in ${parentItem.merchandise.product.title}`,
-        },
-      });
-    });
-
-    operations.push({
-      update: {
-        cartLineId: parentItem.id,
-        title: `Bundle: ${parentItem.merchandise.product.title}`,
-      },
-    });
+  if (input.cart.lines.length < 3) {
+    return { operations: [] };
   }
+  const [parentItem, ...childItems] = input.cart.lines;
 
-  return operations.length > 0 ? { operations } : NO_CHANGES;
+  return {
+    operations: [
+      {
+        merge: {
+          cartLines: childItems.map((item) => ({
+            cartLineId: item.id,
+            quantity: item.quantity || 1,
+          })),
+          parentVariantId: parentItem.merchandise.id,
+          price: {
+            percentageDecrease: {
+              value: 10.0,
+            },
+          },
+
+          title: `${parentItem.merchandise.product.title} Bundle`,
+
+          attributes: [
+            {
+              key: "_bundle_type",
+              value: "auto_generated",
+            },
+            {
+              key: "_bundle_components",
+              value: childItems
+                .map((item) => item.merchandise.product.title)
+                .join(", "),
+            },
+          ],
+        },
+      },
+    ],
+  };
 }
