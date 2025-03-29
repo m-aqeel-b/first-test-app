@@ -28,7 +28,8 @@ export const run = (input) => {
   console.log("get fix", bundleItems2);
   if (bundleItems2.length > 0) {
     bundleItems2.forEach((lineItem) => {
-      const bundleValue = lineItem?.bundleDiscount?.value;
+      //const bundleValue = lineItem?.bundleDiscount?.value;
+      const bundleValue = lineItem?.merchandise?.product?.testMeta?.value;
       console.log("fixed", bundleValue);
       discounts.push({
         targets: [{ productVariant: { id: lineItem.merchandise.id } }],

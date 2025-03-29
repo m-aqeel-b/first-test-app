@@ -18,8 +18,12 @@ query RunInput {
       merchandise {
         ... on ProductVariant {
           id
+
           product {
             id
+            testMeta: metafield(namespace: "custom", key: "fixed_discount") {
+              value
+            }
           }
         }
       }
