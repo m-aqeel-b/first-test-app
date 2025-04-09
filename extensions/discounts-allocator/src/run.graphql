@@ -1,6 +1,64 @@
+# query RunInput {
+#   shop {
+#     metafield(namespace: "$app:discounts-allocator", key: "function-configuration") {
+#       value
+#     }
+#   }
+# }
 query RunInput {
+  discounts {
+    id
+    title
+    code
+    discountApplicationStrategy
+    discountProposals {
+      handle
+      message
+      value {
+        __typename
+        ... on FixedAmount {
+          amount
+          appliesToEachItem
+        }
+        ... on Percentage {
+          value
+        }
+      }
+      targets {
+        cartLineId
+        quantity
+      }
+    }
+    #Single Discount Capcity
+    metafield(namespace: "custom", key: "single_discount_capacity") {
+      value
+    }
+  }
+  presentmentCurrencyRate
+  cart {
+    lines {
+      id
+      quantity
+      cost {
+        amountPerQuantity {
+          amount
+        }
+      }
+      merchandise {
+        __typename
+        ... on ProductVariant {
+          id
+          title
+          product {
+            id
+            title
+          }
+        }
+      }
+    }
+  }
   shop {
-    metafield(namespace: "$app:discounts-allocator", key: "function-configuration") {
+    metafield(namespace: "custom", key: "per_cart_capacity") {
       value
     }
   }
