@@ -1,14 +1,14 @@
 # Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
 
 client_id = "4deb5609128ec7dc072c08245a5ca7c0"
-application_url = "https://kill-future-advertise-ipod.trycloudflare.com"
+application_url = "https://when-naval-croatia-g.trycloudflare.com"
 embedded = true
 name = "first-test-app"
 handle = "first-test-app-143"
 
 [build]
 automatically_update_urls_on_dev = true
-dev_store_url = "app-test-store-njs1.myshopify.com"
+dev_store_url = "app-test-store-njs2.myshopify.com"
 include_config_on_deploy = true
 
 [webhooks]
@@ -24,9 +24,9 @@ scopes = "read_orders,read_product_listings,read_products,write_discounts,write_
 
 [auth]
 redirect_urls = [
-  "https://kill-future-advertise-ipod.trycloudflare.com/auth/callback",
-  "https://kill-future-advertise-ipod.trycloudflare.com/auth/shopify/callback",
-  "https://kill-future-advertise-ipod.trycloudflare.com/api/auth/callback"
+  "https://when-naval-croatia-g.trycloudflare.com/auth/callback",
+  "https://when-naval-croatia-g.trycloudflare.com/auth/shopify/callback",
+  "https://when-naval-croatia-g.trycloudflare.com/api/auth/callback"
 ]
 
 [pos]
