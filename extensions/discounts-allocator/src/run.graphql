@@ -30,7 +30,7 @@ query RunInput {
       }
     }
     #Single Discount Capcity
-    metafield(namespace: "custom", key: "single_discount_capacity") {
+    metafield(namespace: "custom", key: "single_discount_cap") {
       value
     }
   }
@@ -58,7 +58,7 @@ query RunInput {
     }
   }
   shop {
-    metafield(namespace: "custom", key: "per_cart_capacity") {
+    metafield(namespace: "custom", key: "per_cart_cap") {
       value
     }
   }

@@ -20,6 +20,7 @@ function calculateCurrentTargetPrice(inputCartLines, target) {
 export function run(input) {
   // Read the total discounts cap from the shop's metafield, defaulting to -1 if not set
   let totalDiscountsCap = parseFloat(input.shop.metafield?.value ?? "-1");
+  console.log("test:", totalDiscountsCap);
   let totalDiscount = 0.0;
 
   // Initialize the output structure for line discounts
@@ -34,6 +35,7 @@ export function run(input) {
   for (const discount of input.discounts) {
     // Read the cap for the current discount from its metafield, defaulting to -1 if not set
     let currentDiscountCap = parseFloat(discount.metafield?.value ?? "-1");
+    console.log("test2:", currentDiscountCap);
     let currentDiscountTotal = 0.0;
 
     // Process each discount proposal within the current discount
@@ -94,7 +96,7 @@ export function run(input) {
 
         totalDiscount += lineDiscountAmount;
         currentDiscountTotal += lineDiscountAmount;
-
+        console.log("t disc", totalDiscount);
         const targetLineIndex = getTargetLineIndex(target);
         const targetAllocation = {
           discountProposalId: proposal.handle,
