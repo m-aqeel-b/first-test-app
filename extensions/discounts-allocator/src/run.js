@@ -79,16 +79,16 @@ export function run(input) {
           });
         }
 
-        if (
-          totalDiscountsCap >= 0.0 &&
-          totalDiscount + lineDiscountAmount > totalDiscountsCap
-        ) {
-          lineDiscountAmount = totalDiscountsCap - totalDiscount;
-          displayableErrors.push({
-            discountId: discount.id.toString(),
-            reason: TOTAL_DISCOUNTS_CAP_REACHED,
-          });
-        }
+        // if (
+        //   totalDiscountsCap >= 0.0 &&
+        //   totalDiscount + lineDiscountAmount > totalDiscountsCap
+        // ) {
+        //   lineDiscountAmount = totalDiscountsCap - totalDiscount;
+        //   displayableErrors.push({
+        //     discountId: discount.id.toString(),
+        //     reason: TOTAL_DISCOUNTS_CAP_REACHED,
+        //   });
+        // }
 
         if (lineDiscountAmount === 0.0) {
           continue;
