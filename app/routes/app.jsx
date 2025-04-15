@@ -25,6 +25,7 @@ export default function App() {
         {/* <Link to="/app/additKKKkional">Additional page</Link> */}
         {/* <Link to="/app/test">Test page</Link> */}
         {/* <Link to="/app/layout">Layout</Link> */}
+        <Link to="/app/fastBundle">Fast Bundle</Link>
         <Link to="/app/collections">Collections</Link>
         {/* <Link to="/app/createCollection">Create Collections</Link> */}
         <Link to="/app/products">Products</Link>
