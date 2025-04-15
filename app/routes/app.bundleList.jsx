@@ -37,7 +37,9 @@ const bundleList = () => {
                       <Text as="h3" variant="headingSm" fontWeight="bold">
                         Fixed Bundle
                       </Text>
-                      <Button fullWidth>Select</Button>
+                      <Button fullWidth url="../createFixedBundle">
+                        Select
+                      </Button>
                     </BlockStack>
                   </Box>
                 </Bleed>
