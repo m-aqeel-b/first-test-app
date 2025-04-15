@@ -60,7 +60,7 @@ const fastBundle = () => {
               Fast Bundle 1
             </Text>
 
-            <Button primary onClick={() => console.log("Button clicked")}>
+            <Button primary url="/app/bundleList">
               Create new Bundle
             </Button>
           </InlineStack>
