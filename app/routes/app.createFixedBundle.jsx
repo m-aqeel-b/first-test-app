@@ -9,10 +9,25 @@ import {
   Layout,
   InlineStack,
   Button,
+  TextField,
+  Select,
 } from "@shopify/polaris";
 import { ArrowLeftIcon } from "@shopify/polaris-icons";
+import { useCallback, useState } from "react";
 
 const createFixedBundle = () => {
+  const [searchProduct, setSearchProduct] = useState("");
+  const handleChange = useCallback(
+    (newValue) => setSearchProduct(newValue),
+    [],
+  );
+
+  const [selectedOption, setSelectedOption] = useState("Active");
+  const statusOptions = [
+    { label: "Active", value: "active" },
+    { label: "Draft", value: "draft" },
+  ];
+  const handleStatusChange = useCallback((val) => setSelectedOption(val), []);
   return (
     <Page>
       <Layout>
@@ -26,15 +41,36 @@ const createFixedBundle = () => {
         </Layout.Section>
         <Layout.Section>
           <InlineStack align="space-between" gap="400" wrap={false}>
-            <Box width="80%">
-              <Card roundedAbove="sm">Col 1</Card>
+            <Box width="65%">
+              <Card roundedAbove="sm">
+                <Text fontWeight="bold">Included products</Text>
+                <Text>Add products you want to sell together.</Text>
+
+                <InlineStack align="space-between" gap="100" wrap={false}>
+                  <Box width="80%">
+                    <TextField
+                      value={searchProduct}
+                      onChange={handleChange}
+                      autoComplete="off"
+                      placeholder="Search Product"
+                    />
+                  </Box>
+                  <Box width="10%">
+                    <Button>Browse</Button>
+                  </Box>
+                </InlineStack>
+              </Card>
               <Card roundedAbove="sm">Col 1</Card>
             </Box>
-            <Box width="10%">
-              <Card roundedAbove="sm">Col 1</Card>
-              <Card roundedAbove="sm">Col 1</Card>
-              <Card roundedAbove="sm">Col 1</Card>
-              <Card roundedAbove="sm">Col 1</Card>
+            <Box width="30%">
+              <Card roundedAbove="sm">
+                <Text fontWeight="bold">Status</Text>
+                <Select
+                  options={statusOptions}
+                  onChange={handleStatusChange}
+                  value={selectedOption}
+                />
+              </Card>
             </Box>
           </InlineStack>
         </Layout.Section>
