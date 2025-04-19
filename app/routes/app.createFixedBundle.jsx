@@ -14,6 +14,9 @@ import {
   DropZone,
   Icon,
   DatePicker,
+  Frame,
+  Modal,
+  Checkbox,
 } from "@shopify/polaris";
 import {
   ArrowLeftIcon,
@@ -23,8 +26,41 @@ import {
 import { useCallback, useState, useEffect } from "react";
 // import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
+import { useLoaderData, useActionData } from "@remix-run/react";
+import { authenticate } from "../shopify.server";
+
+export async function loader({ request }) {
+  const { admin } = await authenticate.admin(request);
+
+  const response = await admin.graphql(
+    `#graphql
+    query {
+      products(first: 100, reverse: true) {
+        edges {
+          node {
+            id
+            title
+            
+            
+            
+          }
+        }
+      }
+    }`,
+  );
+  const data = await response.json();
+  const {
+    data: {
+      products: { edges },
+    },
+  } = data;
+  console.log("edges1:", edges);
+  return edges;
+}
 
 const createFixedBundle = () => {
+  const getProducts = useLoaderData();
+  console.log("getprod1", getProducts);
   const [searchProduct, setSearchProduct] = useState("");
   const handleChange = useCallback(
     (newValue) => setSearchProduct(newValue),
@@ -82,6 +118,29 @@ const createFixedBundle = () => {
     (month, year) => setDate({ month, year }),
     [],
   );
+  const [active, setActive] = useState(false);
+  const handleModalChange = useCallback(() => setActive(!active), [active]);
+  const handleClose = () => {
+    handleModalChange();
+  };
+
+  //for select product in the modal
+  const [checked, setChecked] = useState({});
+  const [selectedProductIds, setSelectedProductIds] = useState([]);
+  const handleCheckbox = (id) => (newChecked) => {
+    console.log("get is", id);
+    setChecked((prev) => ({
+      ...prev,
+      [id]: newChecked,
+    }));
+    if (newChecked) {
+      // Add product ID to the array
+      setSelectedProductIds((prevIds) => [...prevIds, id]);
+    } else {
+      // Remove product ID from the array
+      setSelectedProductIds((prevIds) => prevIds.filter((id1) => id1 !== id));
+    }
+  };
   if (!ReactQuill) return null;
   return (
     <Page>
@@ -112,7 +171,7 @@ const createFixedBundle = () => {
                     />
                   </Box>
                   <Box width="10%">
-                    <Button>Browse</Button>
+                    <Button onClick={handleModalChange}> Browse</Button>
                   </Box>
                 </InlineStack>
               </Card>
@@ -196,6 +255,39 @@ const createFixedBundle = () => {
             </Box>
           </InlineStack>
         </Layout.Section>
+        <div style={{ height: "500px" }}>
+          <Frame>
+            <Modal
+              open={active}
+              onClose={handleClose}
+              title="Select Products"
+              primaryAction={{
+                content: "Done",
+                onAction: handleClose,
+              }}
+              secondaryActions={[
+                {
+                  content: "Cancel",
+                  onAction: handleClose,
+                },
+              ]}
+            >
+              <Modal.Section>
+                {getProducts.map((prod) => {
+                  return (
+                    <Text>
+                      <Checkbox
+                        label={prod.node.title}
+                        checked={checked[prod.node.id] || false}
+                        onChange={handleCheckbox(prod.node.id)}
+                      />
+                    </Text>
+                  );
+                })}
+              </Modal.Section>
+            </Modal>
+          </Frame>
+        </div>
       </Layout>
     </Page>
   );
