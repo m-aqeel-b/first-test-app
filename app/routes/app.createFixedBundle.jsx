@@ -11,8 +11,15 @@ import {
   Button,
   TextField,
   Select,
+  DropZone,
+  Icon,
+  DatePicker,
 } from "@shopify/polaris";
-import { ArrowLeftIcon } from "@shopify/polaris-icons";
+import {
+  ArrowLeftIcon,
+  CalendarIcon,
+  SearchIcon,
+} from "@shopify/polaris-icons";
 import { useCallback, useState, useEffect } from "react";
 // import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
@@ -65,6 +72,16 @@ const createFixedBundle = () => {
       setReactQuill(() => mod.default);
     });
   }, []);
+  const [{ month, year }, setDate] = useState({ month: 1, year: 2018 });
+  const [selectedSartDates, setSelectedStartDates] = useState({
+    start: new Date("Wed Feb 07 2018 00:00:00 GMT-0500 (EST)"),
+    end: new Date("Wed Feb 07 2018 00:00:00 GMT-0500 (EST)"),
+  });
+
+  const handleStartMonthChange = useCallback(
+    (month, year) => setDate({ month, year }),
+    [],
+  );
   if (!ReactQuill) return null;
   return (
     <Page>
@@ -91,6 +108,7 @@ const createFixedBundle = () => {
                       onChange={handleChange}
                       autoComplete="off"
                       placeholder="Search Product"
+                      prefix={<Icon source={SearchIcon} tone="base" />}
                     />
                   </Box>
                   <Box width="10%">
@@ -139,6 +157,26 @@ const createFixedBundle = () => {
                     />
                   </Box>
                 </Box>
+                <Box>
+                  <DropZone label="Media">
+                    <DropZone.FileUpload />
+                  </DropZone>
+                </Box>
+              </Card>
+              <Card roundedAbove="sm">
+                <InlineStack gap="100" align="space-between">
+                  {/* <Box>
+                    <DatePicker
+                      month={month}
+                      year={year}
+                      onChange={setSelectedStartDates}
+                      onMonthChange={handleStartMonthChange}
+                      selected={selectedSartDates}
+                      prefix={<Icon source={CalendarIcon} tone="base" />}
+                    />
+                  </Box> */}
+                  <Box></Box>
+                </InlineStack>
               </Card>
             </Box>
             <Box width="30%">
