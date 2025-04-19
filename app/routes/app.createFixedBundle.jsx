@@ -188,6 +188,11 @@ const createFixedBundle = () => {
                   value={selectedStatusOption}
                 />
               </Card>
+              <Box style={{ height: "300px" }}>
+                <Card>
+                  <Text fontWeight="bold">Preview</Text>
+                </Card>
+              </Box>
             </Box>
           </InlineStack>
         </Layout.Section>
