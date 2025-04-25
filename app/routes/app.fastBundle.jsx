@@ -8,25 +8,41 @@ import {
   useIndexResourceState,
 } from "@shopify/polaris";
 import React from "react";
+import db from "../db.server";
+import { useLoaderData } from "@remix-run/react";
+export async function loader({ request }) {
+  const bundles = await db.fbp_Bundles.findMany();
+  console.log("getdata2", bundles);
+  return bundles;
+}
 const fastBundle = () => {
-  const bundles = [
-    {
-      id: "11",
-      bundleItems: "bundle items",
-      name: "Test Bundle 1",
-      discount: "50% off",
-      status: "active",
-      type: "percentage",
-    },
-    {
-      id: "22",
-      bundleItems: "bundle items",
-      name: "Test Bundle 2",
-      discount: "Rs. 500 off",
-      status: "active",
-      type: "Fixed bundle",
-    },
-  ];
+  const bundlesData = useLoaderData();
+  const bundles = bundlesData.map((arg) => ({
+    id: arg.id,
+    bundleItems: "bundle items",
+    name: arg.name,
+    discount: arg.discountValue,
+    status: arg.status,
+    type: arg.discountType,
+  }));
+  //   const bundles = [
+  //     {
+  //       id: "11",
+  //       bundleItems: "bundle items",
+  //       name: "Test Bundle 1",
+  //       discount: "50% off",
+  //       status: "active",
+  //       type: "percentage",
+  //     },
+  //     {
+  //       id: "22",
+  //       bundleItems: "bundle items",
+  //       name: "Test Bundle 2",
+  //       discount: "Rs. 500 off",
+  //       status: "active",
+  //       type: "Fixed bundle",
+  //     },
+  //   ];
   const { selectedResources, allResourcesSelected, handleSelectionChange } =
     useIndexResourceState(bundles);
   const rowMarkup = bundles.map(
