@@ -17,6 +17,7 @@ import {
   Frame,
   Modal,
   Checkbox,
+  Form,
 } from "@shopify/polaris";
 import {
   ArrowLeftIcon,
@@ -28,6 +29,7 @@ import { useCallback, useState, useEffect } from "react";
 import "react-quill/dist/quill.snow.css";
 import { useLoaderData, useActionData } from "@remix-run/react";
 import { authenticate } from "../shopify.server";
+import db from "../db.server";
 
 export async function loader({ request }) {
   const { admin } = await authenticate.admin(request);
@@ -56,6 +58,32 @@ export async function loader({ request }) {
   } = data;
   console.log("edges1:", edges);
   return edges;
+}
+
+export async function action({ request }) {
+  const formData = await request.formData();
+  console.log("hit2", formData);
+  const savedData = await db.fbp_Bundles.create({
+    data: {
+      name: formData.get("title"),
+      discountType: formData.get("discountType"),
+      discountValue: formData.get("discountValue"),
+      status: formData.get("status"),
+    },
+  });
+  const productIds = formData.get("selectedProductIds").split(",");
+  const savedEntries = await Promise.all(
+    productIds.map(async (productId) => {
+      // Save each product ID separately to the database
+      return await db.fbp_BundleProducts.create({
+        data: {
+          productId: productId.trim(), // Remove any extra spaces
+          bundleId: savedData.id,
+        },
+      });
+    }),
+  );
+  return savedData;
 }
 
 const createFixedBundle = () => {
@@ -136,14 +164,23 @@ const createFixedBundle = () => {
     if (newChecked) {
       // Add product ID to the array
       setSelectedProductIds((prevIds) => [...prevIds, id]);
+      console.log("sel", selectedProductIds);
     } else {
       // Remove product ID from the array
       setSelectedProductIds((prevIds) => prevIds.filter((id1) => id1 !== id));
     }
   };
+  const handleFormSubmit = useCallback((e) => {
+    console.log("sumit complete");
+    // const formElement = document.querySelector("form");
+    // formElement.submit();
+    e.preventDefault();
+    const form = e.target;
+    form.submit();
+  }, []);
   if (!ReactQuill) return null;
   return (
-    <Page>
+    <Page fullWidth>
       <Layout>
         <Layout.Section>
           <InlineStack align="space-between" blockAlign="center">
@@ -153,78 +190,89 @@ const createFixedBundle = () => {
             </Text>
           </InlineStack>
         </Layout.Section>
-        <Layout.Section>
-          <InlineStack align="space-between" gap="400" wrap={false}>
-            <Box width="65%" marginblockStart="400">
-              <Card roundedAbove="sm">
-                <Text fontWeight="bold">Included products</Text>
-                <Text>Add products you want to sell together.</Text>
 
-                <InlineStack align="space-between" gap="100" wrap={false}>
-                  <Box width="80%">
-                    <TextField
-                      value={searchProduct}
-                      onChange={handleChange}
-                      autoComplete="off"
-                      placeholder="Search Product"
-                      prefix={<Icon source={SearchIcon} tone="base" />}
-                    />
-                  </Box>
-                  <Box width="10%">
-                    <Button onClick={handleModalChange}> Browse</Button>
-                  </Box>
-                </InlineStack>
-              </Card>
-              <Card roundedAbove="sm">
-                <Text fontWeight="bold">Discount</Text>
-                <InlineStack gap="100" align="space-between">
-                  <Box width="40%">
-                    <Select
-                      options={discountTypeOptions}
-                      label="Type"
-                      onChange={handleDiscountTypeOptionsChange}
-                      value={selectedDiscountTypeOption}
-                    />
-                  </Box>
-                  <Box width="40%">
-                    <TextField
-                      label="Value"
-                      value={discountValue}
-                      onChange={handleDiscountValueChange}
-                      autoComplete="off"
-                      type="number"
-                    />
-                  </Box>
-                </InlineStack>
-              </Card>
-              <Card roundedAbove="sm">
-                <Text fontWeight="bold">Bundle Details</Text>
-                <Box>
-                  <TextField
-                    label="Title"
-                    value={bundleTitle}
-                    onChange={handleBundleTitleChange}
-                    autoComplete="off"
-                  />
-                </Box>
-                <Box>
-                  <Text>Product Description</Text>
+        <Layout.Section>
+          <Form onSubmit={handleFormSubmit} method="POST">
+            <InlineStack align="space-between" gap="400" wrap={false}>
+              <Box width="65%" marginblockStart="400">
+                <Card roundedAbove="sm">
+                  <Text fontWeight="bold">Included products</Text>
+                  <Text>Add products you want to sell together.</Text>
+
+                  <InlineStack align="space-between" gap="100" wrap={false}>
+                    <Box width="80%">
+                      <TextField
+                        value={searchProduct}
+                        onChange={handleChange}
+                        autoComplete="off"
+                        placeholder="Search Product"
+                        prefix={<Icon source={SearchIcon} tone="base" />}
+                      />
+                      <TextField
+                        value={selectedProductIds}
+                        name="selectedProductIds"
+                        type="hidden"
+                      />
+                    </Box>
+                    <Box width="10%">
+                      <Button onClick={handleModalChange}> Browse</Button>
+                    </Box>
+                  </InlineStack>
+                </Card>
+                <Card roundedAbove="sm">
+                  <Text fontWeight="bold">Discount</Text>
+                  <InlineStack gap="100" align="space-between">
+                    <Box width="40%">
+                      <Select
+                        options={discountTypeOptions}
+                        label="Type"
+                        onChange={handleDiscountTypeOptionsChange}
+                        value={selectedDiscountTypeOption}
+                        name="discountType"
+                      />
+                    </Box>
+                    <Box width="40%">
+                      <TextField
+                        label="Value"
+                        value={discountValue}
+                        onChange={handleDiscountValueChange}
+                        autoComplete="off"
+                        type="number"
+                        name="discountValue"
+                      />
+                    </Box>
+                  </InlineStack>
+                </Card>
+                <Card roundedAbove="sm">
+                  <Text fontWeight="bold">Bundle Details</Text>
                   <Box>
-                    <ReactQuill
-                      value={productDescription}
-                      onChange={handleProductDescriptionChange}
+                    <TextField
+                      label="Title"
+                      value={bundleTitle}
+                      onChange={handleBundleTitleChange}
+                      autoComplete="off"
+                      name="title"
                     />
                   </Box>
-                </Box>
-                <Box>
-                  <DropZone label="Media">
-                    <DropZone.FileUpload />
-                  </DropZone>
-                </Box>
-              </Card>
-              <Card roundedAbove="sm">
-                <InlineStack gap="100" align="space-between">
-                  {/* <Box>
+                  <Box>
+                    <Text>Product Description</Text>
+                    <Box>
+                      <ReactQuill
+                        value={productDescription}
+                        onChange={handleProductDescriptionChange}
+                        name="description"
+                      />
+                    </Box>
+                  </Box>
+                  <Box>
+                    <DropZone label="Media">
+                      <DropZone.FileUpload />
+                    </DropZone>
+                  </Box>
+                </Card>
+                <Card roundedAbove="sm">
+                  <InlineStack gap="100" align="space-between">
+                    {/* <Box>
                     <DatePicker
                       month={month}
                       year={year}
@@ -234,60 +282,65 @@ const createFixedBundle = () => {
                       prefix={<Icon source={CalendarIcon} tone="base" />}
                     />
                   </Box> */}
-                  <Box></Box>
-                </InlineStack>
-              </Card>
-            </Box>
-            <Box width="30%">
-              <Card roundedAbove="sm">
-                <Text fontWeight="bold">Status</Text>
-                <Select
-                  options={statusOptions}
-                  onChange={handleStatusChange}
-                  value={selectedStatusOption}
-                />
-              </Card>
-              <Box style={{ height: "300px" }}>
-                <Card>
-                  <Text fontWeight="bold">Preview</Text>
+                    <Box></Box>
+                  </InlineStack>
+                </Card>
+                <Card roundedAbove="sm">
+                  <Button submit>Submit</Button>
                 </Card>
               </Box>
-            </Box>
-          </InlineStack>
+              <Box width="30%">
+                <Card roundedAbove="sm">
+                  <Text fontWeight="bold">Status</Text>
+                  <Select
+                    options={statusOptions}
+                    onChange={handleStatusChange}
+                    value={selectedStatusOption}
+                    name="status"
+                  />
+                </Card>
+                <Box style={{ height: "300px" }}>
+                  <Card>
+                    <Text fontWeight="bold">Preview</Text>
+                  </Card>
+                </Box>
+              </Box>
+            </InlineStack>
+            <div style={{ height: "500px" }}>
+              <Frame>
+                <Modal
+                  open={active}
+                  onClose={handleClose}
+                  title="Select Products"
+                  primaryAction={{
+                    content: "Done",
+                    onAction: handleClose,
+                  }}
+                  secondaryActions={[
+                    {
+                      content: "Cancel",
+                      onAction: handleClose,
+                    },
+                  ]}
+                >
+                  <Modal.Section>
+                    {getProducts.map((prod) => {
+                      return (
+                        <Text>
+                          <Checkbox
+                            label={prod.node.title}
+                            checked={checked[prod.node.id] || false}
+                            onChange={handleCheckbox(prod.node.id)}
+                          />
+                        </Text>
+                      );
+                    })}
+                  </Modal.Section>
+                </Modal>
+              </Frame>
+            </div>
+          </Form>
         </Layout.Section>
-        <div style={{ height: "500px" }}>
-          <Frame>
-            <Modal
-              open={active}
-              onClose={handleClose}
-              title="Select Products"
-              primaryAction={{
-                content: "Done",
-                onAction: handleClose,
-              }}
-              secondaryActions={[
-                {
-                  content: "Cancel",
-                  onAction: handleClose,
-                },
-              ]}
-            >
-              <Modal.Section>
-                {getProducts.map((prod) => {
-                  return (
-                    <Text>
-                      <Checkbox
-                        label={prod.node.title}
-                        checked={checked[prod.node.id] || false}
-                        onChange={handleCheckbox(prod.node.id)}
-                      />
-                    </Text>
-                  );
-                })}
-              </Modal.Section>
-            </Modal>
-          </Frame>
-        </div>
       </Layout>
     </Page>
   );
