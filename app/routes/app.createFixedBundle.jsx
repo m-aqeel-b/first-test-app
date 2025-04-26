@@ -42,10 +42,7 @@ export async function loader({ request }) {
           node {
             id
             title
-            
-            
-            
-          }
+            }
         }
       }
     }`,
@@ -62,6 +59,8 @@ export async function loader({ request }) {
 
 export async function action({ request }) {
   const formData = await request.formData();
+
+  //my local db s
   console.log("hit2", formData);
   const savedData = await db.fbp_Bundles.create({
     data: {
@@ -77,12 +76,13 @@ export async function action({ request }) {
       // Save each product ID separately to the database
       return await db.fbp_BundleProducts.create({
         data: {
-          productId: productId.trim(), // Remove any extra spaces
+          productId: productId.trim(),
           bundleId: savedData.id,
         },
       });
     }),
   );
+
   return savedData;
 }
 

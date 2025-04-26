@@ -46,7 +46,7 @@ const fastBundle = () => {
   const { selectedResources, allResourcesSelected, handleSelectionChange } =
     useIndexResourceState(bundles);
   const rowMarkup = bundles.map(
-    ({ id, bundleItems, name, discount, status, type }, index) => (
+    ({ id, bundleItems, name, discount, type, status }, index) => (
       <IndexTable.Row
         id={id}
         key={id}
@@ -62,8 +62,8 @@ const fastBundle = () => {
           </Text>
         </IndexTable.Cell>
         <IndexTable.Cell>{discount}</IndexTable.Cell>
-        <IndexTable.Cell>{status}</IndexTable.Cell>
         <IndexTable.Cell>{type}</IndexTable.Cell>
+        <IndexTable.Cell>{status}</IndexTable.Cell>
       </IndexTable.Row>
     ),
   );
